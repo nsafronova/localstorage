@@ -3,13 +3,17 @@ const headerInput = document.querySelector('.header-input');
 const todoList = document.querySelector('.todo-list');
 const todoComplited = document.querySelector('.todo-completed');
 
-let json;
 let toDoData = [];
-toDoData = JSON.parse(localStorage.getItem('deal'));
+
 
 const render = function () {
     todoList.innerHTML = '';
     todoComplited.innerHTML = '';
+
+    toDoData = JSON.parse(localStorage.getItem('deal'));
+    if (toDoData == null) {
+        toDoData = [];
+    }
 
     toDoData.forEach(function (item) {
 
@@ -30,20 +34,23 @@ const render = function () {
 
         li.querySelector('.todo-complete').addEventListener('click', function () {
             item.completed = !item.completed;
+            localStorage.setItem('deal', JSON.stringify(toDoData));
             render();
         });
 
         li.querySelector('.todo-remove').addEventListener('click', function () {
-            li.remove();
-
+            toDoData.splice(toDoData.indexOf(item), 1);
+            localStorage.setItem('deal', JSON.stringify(toDoData));
+            render();
         });
+
     });
 };
 
 todoControl.addEventListener('submit', function (event) {
 
     event.preventDefault();
-    if (headerInput.value == '') {
+    if (headerInput.value === '') {
         todoControl.disabled = true;
     } else {
 
@@ -55,9 +62,9 @@ todoControl.addEventListener('submit', function (event) {
         toDoData.push(newToDo);
         headerInput.value = '';
 
-        json = JSON.stringify(toDoData);
-        localStorage.setItem('deal', json);
+        localStorage.setItem('deal', JSON.stringify(toDoData));
 
         render();
     }
 });
+render();
